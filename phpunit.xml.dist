@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+>
+    <testsuites>
+        <testsuite name="Proda Package Test Suite">
+            <directory suffix=".php">./tests/</directory>
+            <exclude>./tests/server</exclude>
+            <exclude>./tests/BaseTest.php</exclude>
+        </testsuite>
+    </testsuites>
+    <php>
+        <env name="PRODA_TEST_SERVER_PORT" value="7450"/>
+        <!--        <env name="PRODA_URL_ACTIVATE_DEVICE" value="https://test.5.rsp.humanservices.gov.au/piaweb/api/b2b/%s/devices/%s/jwk" />-->
+        <!--        <env name="PRODA_URL_REFRESH_DEVICE" value="https://test.5.rsp.humanservices.gov.au/piaweb/api/b2b/%s/orgs/%s/devices/%s/jwk" />-->
+        <!--        <env name="PRODA_URL_AUTHORISATION_REQUEST" value="https://vnd.PRODA.humanservices.gov.au/mga/sps/oauth/oauth20/token" />-->
+        <env name="PRODA_URL_ACTIVATE_DEVICE"
+             value="http://localhost:7450/piaweb/api/b2b/%s/devices/%s/jwk"/>
+        <env name="PRODA_URL_REFRESH_DEVICE"
+             value="http://localhost:7450/piaweb/api/b2b/%s/orgs/%s/devices/%s/jwk"/>
+        <env name="PRODA_URL_AUTHORISATION_REQUEST"
+             value="http://localhost:7450/mga/sps/oauth/oauth20/token"/>
+        <env name="DB_CONNECTION" value="testing"/>
+    </php>
+</phpunit>

@@ -1,0 +1,19 @@
+{
+    "name": "gradzi-au/proda-test-server",
+    "description": "Sub-package for the Proda Test Server using the Lumen Framework",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Wood",
+            "email": "wood.danielg@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "laravel/lumen-framework": "^6.3",
+        "illuminate/session": "^6.15",
+        "codercat/jwk-to-pem": "^0.0.3",
+        "lcobucci/jwt": "^3.3"
+    }
+}
