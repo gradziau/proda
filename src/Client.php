@@ -51,11 +51,6 @@ class Client
 
     public $algorithm;
 
-    /**
-     * An array of valid Device Activation Exceptions, keyed to the device error codes from PRODA
-     *
-     * @var array
-     */
     protected $deviceActivationExceptions = [
         'DE.2' => OrganisationNotFoundException::class,
         'DE.4' => DeviceNotFoundException::class,
@@ -69,110 +64,65 @@ class Client
         '111' => ProdaInputValidationErrorException::class,
     ];
 
-    /**
-     * An array of valid Access Token exceptions, keyed to the access token error codes from PRODA
-     *
-     * @var array
-     */
     protected $accessTokenExceptions = [
         'mapping_error' => AccessTokenMappingErrorException::class,
         'device_error' => AccessTokenDeviceErrorException::class,
     ];
 
-    /**
-     * @param $deviceName
-     * @return $this
-     */
     public function forDeviceName($deviceName)
     {
         $this->deviceName = $deviceName;
         return $this;
     }
 
-    /**
-     * @param $publicKeyModulus
-     * @return $this
-     */
     public function usingPublicKeyModulus($publicKeyModulus)
     {
         $this->publicKeyModulus = $publicKeyModulus;
         return $this;
     }
 
-    /**
-     * @param $clientId
-     * @return $this
-     */
     public function withClientId($clientId)
     {
         $this->clientId = $clientId;
         return $this;
     }
 
-    /**
-     * @param $organisationId
-     * @return $this
-     */
     public function withOrganisationId($organisationId)
     {
         $this->organisationId = $organisationId;
         return $this;
     }
 
-    /**
-     * @param $oneTimeActivationCode
-     * @return $this
-     */
     public function withOneTimeActivationCode($oneTimeActivationCode)
     {
         $this->oneTimeActivationCode = $oneTimeActivationCode;
         return $this;
     }
 
-    /**
-     * @param $accessToken
-     * @return $this
-     */
     public function usingAccessToken($accessToken)
     {
         $this->accessToken = $accessToken;
         return $this;
     }
 
-    /**
-     * @param $jsonWebKey
-     * @return $this
-     */
     public function usingJsonWebKey($jsonWebKey)
     {
         $this->jsonWebKey = $jsonWebKey;
         return $this;
     }
 
-    /**
-     * @param $privateKey
-     * @return $this
-     */
     public function usingPrivateKey($privateKey)
     {
         $this->privateKey = $privateKey;
         return $this;
     }
 
-    /**
-     * @param $algorithm
-     * @return $this
-     */
     public function withAlgorithm($algorithm)
     {
         $this->algorithm = $algorithm;
         return $this;
     }
 
-    /**
-     * @return array
-     * @throws ProdaDeviceActivationException
-     */
     public function activateDevice()
     {
         $response = Zttp::withHeaders($this->getDeviceActivationHeaders())
@@ -181,10 +131,6 @@ class Client
         return $this->handleDeviceActivationResponse($response);
     }
 
-    /**
-     * @return array
-     * @throws ProdaDeviceActivationException
-     */
     public function refreshDevice()
     {
         $response = Zttp::withHeaders($this->getDeviceActivationHeaders())
@@ -193,9 +139,6 @@ class Client
         return $this->handleDeviceActivationResponse($response);
     }
 
-    /**
-     * @return array
-     */
     protected function getDeviceActivationHeaders()
     {
         $headers = [
@@ -217,27 +160,18 @@ class Client
         return $headers;
     }
 
-    /**
-     * @return string
-     */
     protected function getActivateDeviceUrl()
     {
         return sprintf(config('proda.urls.activate_device'),
             static::API_VERSION, $this->deviceName);
     }
 
-    /**
-     * @return string
-     */
     protected function getRefreshDeviceUrl()
     {
         return sprintf(config('proda.urls.refresh_device_key'),
             static::API_VERSION, $this->organisationId, $this->deviceName);
     }
 
-    /**
-     * @return array
-     */
     protected function getDeviceActivationBody()
     {
         return [
@@ -247,11 +181,6 @@ class Client
         ];
     }
 
-    /**
-     * @param ZttpResponse $response
-     * @return array
-     * @throws ProdaDeviceActivationException
-     */
     protected function handleDeviceActivationResponse(ZttpResponse $response)
     {
         $responseData = $response->json();
@@ -263,10 +192,6 @@ class Client
         return $responseData;
     }
 
-    /**
-     * @param array $responseData
-     * @throws ProdaDeviceActivationException
-     */
     protected function handleDeviceActivationError(array $responseData)
     {
         if ($this->responseHasValidDeviceActivationError($responseData)) {
@@ -277,10 +202,6 @@ class Client
         throw new ProdaDeviceActivationException($responseData);
     }
 
-    /**
-     * @param array $responseData
-     * @return bool
-     */
     protected function responseHasValidDeviceActivationError(array $responseData)
     {
         return (is_array($responseData) &&
@@ -289,10 +210,6 @@ class Client
             array_key_exists($responseData['errors']['code'], $this->deviceActivationExceptions));
     }
 
-    /**
-     * @return array
-     * @throws ProdaAccessTokenException
-     */
     public function getAccessToken()
     {
         $response = Zttp::asFormParams()
@@ -301,17 +218,11 @@ class Client
         return $this->handleAccessTokenResponse($response);
     }
 
-    /**
-     * @return string
-     */
     protected function getAuthorisationServiceRequestUrl()
     {
         return config('proda.urls.authorisation_service_request');
     }
 
-    /**
-     * @return array
-     */
     protected function getAccessTokenPostParameters()
     {
         return [
@@ -321,23 +232,6 @@ class Client
         ];
     }
 
-    /**
-     * Creates and returns a JSON Web Token
-     *
-     * Claims:
-     *  iss         = organisation id (issuedBy)
-     *  sub         = device name (relatedTo)
-     *  aud         = 'https://proda.humanservices.gov.au' (permittedFor)
-     *  token.aud   = relaying party's audience string (e.g. TCSI?)
-     *  iat         = issued at timestamp
-     *  exp         = expiry timestamp (i.e. issued at + 3600 seconds)
-     *
-     * Headers:
-     *  alg         = 'RS256' or 'RS384' or 'RS512'
-     *  kid         = device name
-     *
-     * @return string
-     */
     protected function getJsonWebToken()
     {
         $time = Carbon::now()->timestamp;
@@ -357,11 +251,6 @@ class Client
         return (string)$token;
     }
 
-    /**
-     * @param ZttpResponse $response
-     * @return array
-     * @throws ProdaAccessTokenException
-     */
     protected function handleAccessTokenResponse(ZttpResponse $response)
     {
         $responseData = $response->json();
@@ -373,10 +262,6 @@ class Client
         return $responseData;
     }
 
-    /**
-     * @param array $responseData
-     * @throws ProdaAccessTokenException
-     */
     protected function handleAccessTokenError(array $responseData)
     {
         if ($this->responseHasValidAccessTokenError($responseData)) {
@@ -387,10 +272,6 @@ class Client
         throw new ProdaAccessTokenException($responseData);
     }
 
-    /**
-     * @param array $responseData
-     * @return bool
-     */
     protected function responseHasValidAccessTokenError(array $responseData)
     {
         return (is_array($responseData) &&

@@ -3,3 +3,4 @@
 .idea/
 /tests/server/vendor
 /tests/server/storage
+.vscode/settings.json
