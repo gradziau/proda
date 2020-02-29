@@ -1,9 +1,12 @@
-# PRODA Authorisation API Library
+# PRODA Authorisation API Library !WIP!
 This library manages the activation of devices on PRODA, the Department of Human Services authorisation API.
 
 ## Installation
 1. Install via composer/repository
 2. Publish resources via the ServiceProvider
+
+## Tests
+(tests/server/composer)
 
 ## Config
 Certain values are autoloaded from the config file (i.e. clientId and OrganisationId)
