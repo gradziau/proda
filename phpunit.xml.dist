@@ -21,6 +21,7 @@
         <!--        <env name="PRODA_URL_ACTIVATE_DEVICE" value="https://test.5.rsp.humanservices.gov.au/piaweb/api/b2b/%s/devices/%s/jwk" />-->
         <!--        <env name="PRODA_URL_REFRESH_DEVICE" value="https://test.5.rsp.humanservices.gov.au/piaweb/api/b2b/%s/orgs/%s/devices/%s/jwk" />-->
         <!--        <env name="PRODA_URL_AUTHORISATION_REQUEST" value="https://vnd.PRODA.humanservices.gov.au/mga/sps/oauth/oauth20/token" />-->
+        <env name="PRODA_ACCESS_TOKEN_EXPIRY_SECONDS" value="3600" />
         <env name="PRODA_URL_ACTIVATE_DEVICE"
              value="http://localhost:7450/piaweb/api/b2b/%s/devices/%s/jwk"/>
         <env name="PRODA_URL_REFRESH_DEVICE"

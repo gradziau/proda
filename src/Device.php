@@ -6,6 +6,7 @@ use GradziAu\Proda\Exceptions\ProdaAccessTokenException;
 use GradziAu\Proda\Exceptions\ProdaDeviceActivationException;
 use GradziAu\Proda\SslKey;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * @method static Device create(array $array)
@@ -79,13 +80,36 @@ class Device extends Model
 
     public function getAccessToken()
     {
+        return $this->getAccessTokenFromCache();
+    }
+
+    protected function getAccessTokenFromCache()
+    {
+        $cacheKey = $this->getAccessTokenCacheKey();
+        $expirySeconds = $this->getAccessTokenExpiryInSeconds();
+        return Cache::remember($cacheKey, $expirySeconds, function () {
+            return $this->getAccessTokenFromClient();
+        });
+    }
+
+    protected function getAccessTokenCacheKey()
+    {
+        return sprintf('%s.%s.%s', $this->organistionId, $this->clientId, $this->name);
+    }
+
+    protected function getAccessTokenExpiryInSeconds()
+    {
+        return config('proda.access_token_expiry_seconds');
+    }
+
+    protected function getAccessTokenFromClient()
+    {
         $requestData = app('proda')->usingPrivateKey($this->private_key)
             ->forDeviceName($this->name)
             ->withClientId($this->client_id)
             ->withOrganisationId($this->organisation_id)
             ->withAlgorithm($this->json_algorithm)
             ->getAccessToken();
-
         return AccessToken::fromAccessTokenRequest($requestData)->accessToken;
     }
 

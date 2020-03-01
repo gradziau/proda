@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Carbon\Carbon;
 use GradziAu\Proda\Client;
 use GradziAu\Proda\Exceptions\InvalidActivationCodeException;
 use GradziAu\Proda\Exceptions\ProdaAccessTokenException;
@@ -136,6 +137,40 @@ class ProdaTest extends BaseTest
         $device->refresh();
 
         $this->assertNotNull($device->key_expiry);
+    }
+
+    /** @test */
+    public function it_caches_an_access_token()
+    {
+        $name = Str::random();
+        $device = Device::create([
+            'name' => $name,
+            'one_time_activation_code' => Zttp::get(static::$baseHost . '/otac/' . $name)->body()
+        ]);
+        $device->activate();
+
+        $accessToken = $device->getAccessToken();
+        $cachedAccessToken = $device->getAccessToken();
+
+        $this->assertEquals($accessToken, $cachedAccessToken);
+    }
+
+    /** @test */
+    public function it_retrieves_a_new_token_when_cache_has_expired()
+    {
+        $name = Str::random();
+        $device = Device::create([
+            'name' => $name,
+            'one_time_activation_code' => Zttp::get(static::$baseHost . '/otac/' . $name)->body()
+        ]);
+        $device->activate();
+
+        $this->app->config->set('proda.access_token_expiry_seconds', '0.001');
+        $accessToken = $device->getAccessToken();
+        sleep(0.005);
+        $newAccessToken = $device->getAccessToken();
+
+        $this->assertNotEquals($accessToken, $newAccessToken);
     }
 
 }

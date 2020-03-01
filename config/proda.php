@@ -5,7 +5,7 @@ return [
     'organisation_id' => env('PRODA_ORGANISATION_ID'),
     'device_name' => env('PRODA_DEVICE_NAME'),
     'client_id' => env('PRODA_CLIENT_ID'),
-
+    'access_token_expiry_seconds' => env('PRODA_ACCESS_TOKEN_EXPIRY_SECONDS'),
     'urls' => [
         /**
          * The URL for activating a 'B2G Device'
@@ -31,10 +31,5 @@ return [
          */
         'authorisation_service_request' => env('PRODA_URL_AUTHORISATION_REQUEST'),
     ],
-
-    /**
-     * This is the location where the private key is stored. Appended to the 'storage/app' folder.
-     */
-    'private_key_location' => env('PRODA_PRIVATE_KEY_LOCATION', 'proda/private.pem'),
 
 ];
