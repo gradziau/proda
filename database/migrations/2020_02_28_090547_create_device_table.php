@@ -20,6 +20,7 @@ class CreateDeviceTable extends Migration
             $table->string('organisation_id');
             $table->string('client_id');
             $table->string('one_time_activation_code');
+            $table->string('device_expiry')->nullable()->default(null);
             $table->string('key_status');
             $table->string('key_expiry')->nullable()->default(null);
             $table->string('private_key');

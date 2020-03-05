@@ -5,7 +5,13 @@ return [
     'organisation_id' => env('PRODA_ORGANISATION_ID'),
     'device_name' => env('PRODA_DEVICE_NAME'),
     'client_id' => env('PRODA_CLIENT_ID'),
-    'access_token_expiry_seconds' => env('PRODA_ACCESS_TOKEN_EXPIRY_SECONDS'),
+    'access_token_expiry_seconds' => env('PRODA_ACCESS_TOKEN_EXPIRY_SECONDS', 3600),
+
+    /**
+     * The email address used for sending notification emails when running the proda:notify-expiring-devices command
+     */
+    'expiring_devices_notification_email' => env('PRODA_EXPIRING_DEVICES_NOTIFICATION_EMAIL'),
+
     'urls' => [
         /**
          * The URL for activating a 'B2G Device'

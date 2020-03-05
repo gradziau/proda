@@ -2,6 +2,7 @@
 
 namespace GradziAu\Proda;
 
+use Carbon\Carbon;
 use GradziAu\Proda\Exceptions\ProdaAccessTokenException;
 use GradziAu\Proda\Exceptions\ProdaDeviceActivationException;
 use GradziAu\Proda\SslKey;
@@ -16,6 +17,9 @@ class Device extends Model
 
     const PRODA_DEVICE_ACTIVE = '[ACTIVE]';
     const PRODA_DEVICE_INACTIVE = '[INACTIVE]';
+
+    const DAYS_BEFORE_KEY_EXPIRY_SCOPE = 2;
+    const DAYS_BEFORE_DEVICE_EXPIRY_SCOPE = 7;
 
     protected $guarded = [];
 
@@ -37,6 +41,18 @@ class Device extends Model
         });
     }
 
+    public function scopeWithExpiringKeys($query)
+    {
+        $query->where('key_status', static::PRODA_DEVICE_ACTIVE)
+            ->where('key_expiry', '<=', Carbon::now()->addDays(static::DAYS_BEFORE_KEY_EXPIRY_SCOPE));
+    }
+
+    public function scopeExpiring($query)
+    {
+        $query->where('key_status', static::PRODA_DEVICE_ACTIVE)
+            ->where('device_expiry', '<=', Carbon::now()->addDays(static::DAYS_BEFORE_DEVICE_EXPIRY_SCOPE));
+    }
+
     protected function setAdditionalDefaultValues()
     {
         if (!$this->organisation_id) {
@@ -54,7 +70,7 @@ class Device extends Model
 
     public function activate(): Device
     {
-        return $this->sendActivateDeviceRequest();
+        return $this->sendActivateDeviceRequest()->store();
     }
 
     protected function sendActivateDeviceRequest(): Device
@@ -70,12 +86,13 @@ class Device extends Model
         return $this->fromProdaResponse($deviceActivationResponse);
     }
 
-    public function refresh(): Device
+    public function refreshKey(): Device
     {
         $accessToken = $this->getAccessToken();
 
         return $this->generateNewSslKeyValues()
-            ->sendDeviceRefreshRequest($accessToken);
+            ->sendDeviceRefreshRequest($accessToken)
+            ->store();
     }
 
     public function getAccessToken()
@@ -113,6 +130,17 @@ class Device extends Model
         return AccessToken::fromAccessTokenRequest($requestData)->accessToken;
     }
 
+    public function generateNewSslKeyValues()
+    {
+        $sslKey = SslKey::new();
+        $this->private_key = $sslKey->getPrivateKey();
+        $this->public_key_modulus = $sslKey->getPublicKeyModulus();
+        $this->json_web_key = $sslKey->getJsonWebKeyWithKeyId($this->name);
+        $this->json_algorithm = strtoupper($sslKey::ALGORITHM);
+
+        return $this;
+    }
+
     protected function sendDeviceRefreshRequest($accessToken): Device
     {
         $deviceRefreshResponse = app('proda')->forDeviceName($this->name)
@@ -125,17 +153,9 @@ class Device extends Model
         return $this->fromProdaResponse($deviceRefreshResponse);
     }
 
-    /**
-     * @return $this
-     */
-    public function generateNewSslKeyValues()
+    protected function store(): Device
     {
-        $sslKey = SslKey::new();
-        $this->private_key = $sslKey->getPrivateKey();
-        $this->public_key_modulus = $sslKey->getPublicKeyModulus();
-        $this->json_web_key = $sslKey->getJsonWebKeyWithKeyId($this->name);
-        $this->json_algorithm = strtoupper($sslKey::ALGORITHM);
-
+        $this->save();
         return $this;
     }
 
@@ -146,6 +166,7 @@ class Device extends Model
         $this->status = $responseData['deviceStatus'];
         $this->key_status = $responseData['keyStatus'];
         $this->key_expiry = $responseData['keyExpiry'];
+        $this->device_expiry = $responseData['deviceExpiry'];
         return $this;
     }
 

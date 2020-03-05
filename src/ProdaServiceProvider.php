@@ -2,6 +2,8 @@
 
 namespace GradziAu\Proda;
 
+use GradziAu\Proda\Commands\ExpiringDevicesNotificationCommand;
+use GradziAu\Proda\Commands\RefreshDevicesCommand;
 use Illuminate\Support\ServiceProvider;
 
 class ProdaServiceProvider extends ServiceProvider
@@ -22,6 +24,11 @@ class ProdaServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/../config/proda.php' => config_path('proda.php'),
             ], 'config');
+
+            $this->commands([
+                RefreshDevicesCommand::class,
+                ExpiringDevicesNotificationCommand::class,
+            ]);
         }
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
