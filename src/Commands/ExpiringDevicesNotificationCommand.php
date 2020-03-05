@@ -21,8 +21,10 @@ class ExpiringDevicesNotificationCommand extends Command
     public function handle()
     {
         $devices = Device::expiring()->get();
-        Notification::route('mail', config('proda.expiring_devices_notification_email'))
-            ->notify(new ExpiringDevicesNotification($devices));
+        if ($devices->count()) {
+            Notification::route('mail', config('proda.expiring_devices_notification_email'))
+                ->notify(new ExpiringDevicesNotification($devices));
+        }
     }
 
 }

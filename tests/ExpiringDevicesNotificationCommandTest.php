@@ -38,4 +38,17 @@ class ExpiringDevicesNotificationCommandTest extends BaseTestWithServer
         Notification::assertTimesSent(1, ExpiringDevicesNotification::class);
     }
 
+    /** @test */
+    public function it_sends_no_notification_when_no_devices_are_expiring()
+    {
+        $deviceName = Str::random();
+        factory(Device::class)->create(['name' => $deviceName, 'device_expiry' => (string)Carbon::now()->addDays(60)]);
+
+        Notification::fake();
+
+        $this->artisan('proda:notify-expiring-devices');
+
+        Notification::assertNothingSent();
+    }
+
 }
