@@ -32,7 +32,8 @@ class ExpiringDevicesNotification extends Notification implements ShouldQueue
 
         foreach ($this->devices as $device) {
             $mailMessage->line('Device: ' . $device->name .
-                ' (Organisation ID: ' . $device->organisation_id . '; Client ID: ' . $device->client_id . ')');
+                ' (Organisation ID: ' . $device->organisation_id . '; Client ID: ' . $device->client_id . ') ' .
+                'Expiring: ' . $device->device_expiry);
         }
 
         return $mailMessage;
