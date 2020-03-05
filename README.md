@@ -1,20 +1,32 @@
-# PRODA Authorisation API Library !WIP!
+# PRODA Authorisation API Library
 This library manages the activation of devices on PRODA, the Department of Human Services authorisation API.
 
 ## Installation
-1. Install via composer/repository
-2. Publish resources via the ServiceProvider
+1. For the moment, add this package as a repository to your ```composer.json``` file (not yet available on Packagist): 
+```
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/gradzi-au/proda"
+    }
+]
+```
+2. Next, run this command to add the PRODA package to your project:
+```
+composer require gradzi-au/proda
+```
 
-## Tests
-(tests/server/composer)
-
-## Config
-Certain values are autoloaded from the config file (i.e. clientId and OrganisationId)
+3. Copy the config to your app's local config with the Publish command:
+```
+php artisan vendor:publish --provider="GradziAu\Proda\ServiceProvider"
+```
 
 ## Storage
-Device uses Laravel's Eloquent models/migrations to store in a database
+A ```Device``` is stored in the database using Laravel's Eloquent models/migrations.
+An ```AccessToken``` is cached, currently for sixty minutes (3600 seconds), the default expiry from PRODA.
 
-## Activate a New Device
+## Usage
+### Activate a New Device
 A device needs the following to be activated:
 1. A client ID (from the vendor web interface)
 2. An organisation ID (or "RA Number") from the PRODA web interface
@@ -26,24 +38,44 @@ Then:
 2. Set the properties on the device
 3. Activate
 
-(see tests for documentation for now)
-
 ```
 $device->activate();
 ```
 
-## Obtain an Access Token for an Activated Device
+### Obtain an Access Token for an Activated Device
 ```
 $accessToken = $device->getAccessToken();
 ```
 
 This access token can then be used for requests to "Relaying Parties" e.g. TCSI.
 
-## Refresh the SSL Key for an already Activated Device
+### Refresh the SSL Key for an already Activated Device
+Device Keys stored with PRODA have an expiry date, and must be refreshed at regular intervals. To refresh the device key in your app:
 ```
 $device->refresh();
 ```
 
-## Command for refreshing expiring device keys
+### Command for Refreshing Expiring Device Keys
+Device Keys stored with PRODA have an expiry date, and must be refreshed at regular intervals.
+Setup a recurring job to run the following command to do this automatically:
+```
+php artisan proda:refresh-devices
+```
 
-## Command for expiring device notifications
+### Command for Expiring Device Notifications
+Sends an email notification using the email address defined in the config (proda.php):
+```
+notify_expiring_devices_notification => 'proda@example.com'
+```
+Setup a recurring job to run the following command:
+```
+php artisan proda:notify-expiring-devices
+```
+
+## Tests
+The suite of tests has an additional composer dependency. Under tests/server you'll find an additional ```composer.json``` file.
+This is setup so that a very basic [Lumen](https://lumen.laravel.com) app can be run to mock the server requests. Be sure to run the following in addition when testing the package:
+```
+./tests/server/composer install
+```
+
