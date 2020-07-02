@@ -46,6 +46,7 @@
   },
   "scripts" : {
     "post-install-cmd": "composer -d'./tests/server' install",
-    "post-update-cmd": "composer -d'./tests/server' update"
+    "post-update-cmd": "composer -d'./tests/server' update",
+    "post-upgrade-cmd": "composer -d'./tests/server' upgrade"
   }
 }
