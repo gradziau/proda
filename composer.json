@@ -1,5 +1,5 @@
 {
-  "name": "gradzi-au/proda",
+  "name": "gradziau/proda",
   "description": "A PHP package for communicating with PRODA.",
   "type": "library",
   "license": "MIT",
