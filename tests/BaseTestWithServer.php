@@ -3,8 +3,8 @@
 namespace GradziAu\Proda\Tests;
 
 use GradziAu\Proda\Device;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use Zttp\Zttp;
 
 class BaseTestWithServer extends BaseTest
 {
@@ -27,7 +27,7 @@ class BaseTestWithServer extends BaseTest
 
     public function getTestActivationCode($deviceName)
     {
-        return Zttp::get(static::$baseServerHost . '/otac/' . $deviceName)->body();
+        return Http::get(static::$baseServerHost . '/otac/' . $deviceName)->body();
     }
 
 }

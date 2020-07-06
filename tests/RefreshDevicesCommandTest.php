@@ -5,7 +5,6 @@ namespace GradziAu\Proda\Tests;
 use Carbon\Carbon;
 use GradziAu\Proda\Device;
 use Illuminate\Support\Str;
-use Zttp\Zttp;
 
 class RefreshDevicesCommandTest extends BaseTestWithServer
 {

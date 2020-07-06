@@ -17,12 +17,12 @@ use GradziAu\Proda\Exceptions\OrganisationNotFoundException;
 use GradziAu\Proda\Exceptions\ProdaAccessTokenException;
 use GradziAu\Proda\Exceptions\ProdaDeviceActivationException;
 use GradziAu\Proda\Exceptions\ProdaInputValidationErrorException;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\Response as HttpResponse;
 use Illuminate\Support\Str;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Zttp\Zttp;
-use Zttp\ZttpResponse;
 
 class Client
 {
@@ -125,7 +125,7 @@ class Client
 
     public function activateDevice()
     {
-        $response = Zttp::withHeaders($this->getDeviceActivationHeaders())
+        $response = Http::withHeaders($this->getDeviceActivationHeaders())
             ->put($this->getActivateDeviceUrl(), $this->getDeviceActivationBody());
 
         return $this->handleDeviceActivationResponse($response);
@@ -133,7 +133,7 @@ class Client
 
     public function refreshDevice()
     {
-        $response = Zttp::withHeaders($this->getDeviceActivationHeaders())
+        $response = Http::withHeaders($this->getDeviceActivationHeaders())
             ->put($this->getRefreshDeviceUrl(), $this->jsonWebKey);
 
         return $this->handleDeviceActivationResponse($response);
@@ -181,11 +181,11 @@ class Client
         ];
     }
 
-    protected function handleDeviceActivationResponse(ZttpResponse $response)
+    protected function handleDeviceActivationResponse(HttpResponse $response)
     {
         $responseData = $response->json();
 
-        if (!$response->isOk()) {
+        if (!$response->ok()) {
             $this->handleDeviceActivationError($responseData);
         }
 
@@ -212,7 +212,7 @@ class Client
 
     public function getAccessToken()
     {
-        $response = Zttp::asFormParams()
+        $response = Http::asForm()
             ->post($this->getAuthorisationServiceRequestUrl(), $this->getAccessTokenPostParameters());
 
         return $this->handleAccessTokenResponse($response);
@@ -251,11 +251,11 @@ class Client
         return (string)$token;
     }
 
-    protected function handleAccessTokenResponse(ZttpResponse $response)
+    protected function handleAccessTokenResponse(HttpResponse $response)
     {
         $responseData = $response->json();
 
-        if (!$response->isOk()) {
+        if (!$response->ok()) {
             $this->handleAccessTokenError($responseData);
         }
 

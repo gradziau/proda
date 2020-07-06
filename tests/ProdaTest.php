@@ -2,17 +2,13 @@
 
 namespace Tests;
 
-use Carbon\Carbon;
-use GradziAu\Proda\Client;
 use GradziAu\Proda\Exceptions\InvalidActivationCodeException;
 use GradziAu\Proda\Exceptions\ProdaAccessTokenException;
 use GradziAu\Proda\Exceptions\ProdaDeviceActivationException;
 use GradziAu\Proda\ProdaServiceProvider;
 use GradziAu\Proda\Tests\BaseTestWithServer;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use Zttp\Zttp;
-use Orchestra\Testbench;
-use GradziAu\Proda\AccessToken;
 use GradziAu\Proda\Device;
 
 class ProdaTest extends BaseTestWithServer
@@ -54,7 +50,7 @@ class ProdaTest extends BaseTestWithServer
         $name = Str::random();
         $device = Device::create([
             'name' => $name,
-            'one_time_activation_code' => Zttp::get(static::$baseServerHost . '/expiredotac/' . $name)->body()
+            'one_time_activation_code' => Http::get(static::$baseServerHost . '/expiredotac/' . $name)->body()
         ]);
 
         $this->expectException(InvalidActivationCodeException::class);
@@ -71,7 +67,7 @@ class ProdaTest extends BaseTestWithServer
             'one_time_activation_code' => Str::random()
         ]);
 
-        Zttp::get(static::$baseServerHost . '/otac/' . $device->name)->body();
+        Http::get(static::$baseServerHost . '/otac/' . $device->name)->body();
 
         $this->expectException(InvalidActivationCodeException::class);
         $device->activate();

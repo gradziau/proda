@@ -8,7 +8,6 @@ use GradziAu\Proda\Device;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Zttp\Zttp;
 use Illuminate\Support\Facades\Notification;
 
 class ExpiringDevicesNotificationCommandTest extends BaseTestWithServer
