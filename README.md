@@ -7,7 +7,7 @@ This library manages the activation of devices on PRODA, the Department of Human
 "repositories": [
     {
         "type": "vcs",
-        "url": "https://github.com/gradzi-au/proda"
+        "url": "https://github.com/gradziau/proda"
     }
 ]
 ```
@@ -74,8 +74,8 @@ php artisan proda:notify-expiring-devices
 
 ## Tests
 The suite of tests has an additional composer dependency. Under tests/server you'll find an additional ```composer.json``` file.
-This is setup so that a very basic [Lumen](https://lumen.laravel.com) app can be run to mock the server requests. Be sure to run the following in addition when testing the package:
+This is setup so that a very basic [Lumen](https://lumen.laravel.com) app can be run to mock the server requests. There is a composer hook that also installs these packages when the base package is installed.
 ```
-./tests/server/composer install
+composer install
+./vendor/bin/phpunit
 ```
-
