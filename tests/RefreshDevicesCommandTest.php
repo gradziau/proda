@@ -14,7 +14,7 @@ class RefreshDevicesCommandTest extends BaseTestWithServer
     {
         $this->withoutExceptionHandling();
         $deviceName = Str::random();
-        $device = factory(Device::class)->create(['name' => $deviceName, 'one_time_activation_code' => $this->getTestActivationCode($deviceName)]);
+        $device = Device::factory()->create(['name' => $deviceName, 'one_time_activation_code' => $this->getTestActivationCode($deviceName)]);
         $device->activate()
             ->update(['key_expiry' => (string)Carbon::now()]);
         $keyExpiry = $device->key_expiry;

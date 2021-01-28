@@ -13,7 +13,6 @@ use GradziAu\Proda\Device;
 
 class ProdaTest extends BaseTestWithServer
 {
-
     protected $client;
 
     protected $organisationId;
@@ -128,6 +127,4 @@ class ProdaTest extends BaseTestWithServer
     {
         $this->assertNotNull($this->newActivatedDevice()->device_expiry);
     }
-
-
 }

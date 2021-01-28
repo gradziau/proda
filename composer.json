@@ -10,14 +10,14 @@
     }
   ],
   "require": {
-    "php": ">=7.0",
-    "guzzlehttp/guzzle": "^6.0",
-    "lcobucci/jwt": "^3.3",
+    "php": ">=7.4",
+    "guzzlehttp/guzzle": "^7.0",
+    "lcobucci/jwt": "^4.0",
     "ext-openssl": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0",
-    "orchestra/testbench": "^5.0",
+    "orchestra/testbench": "^6.0",
     "ext-json": "*"
   },
   "autoload": {
@@ -27,7 +27,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "GradziAu\\Proda\\Tests\\": "tests/"
+      "GradziAu\\Proda\\Tests\\": "tests/",
+      "Database\\Factories\\": "database/factories/"
     }
   },
   "extra": {

@@ -20,9 +20,10 @@ use GradziAu\Proda\Exceptions\ProdaInputValidationErrorException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response as HttpResponse;
 use Illuminate\Support\Str;
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use DateTimeImmutable;
+use Lcobucci\JWT\Configuration;
 
 class Client
 {
@@ -234,21 +235,21 @@ class Client
 
     protected function getJsonWebToken()
     {
-        $time = Carbon::now()->timestamp;
-        $signer = new Sha256();
-        $privateKey = new Key($this->privateKey);
+        $now = new DateTimeImmutable();
+        $config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($this->privateKey));
 
-        $token = (new Builder)->issuedBy($this->organisationId)
+        $token = $config->builder()
+            ->issuedBy($this->organisationId)
             ->relatedTo($this->deviceName)
             ->permittedFor('https://proda.humanservices.gov.au')
             ->withClaim('token.aud', 'tcsi.test.audience.string')
-            ->issuedAt($time)
-            ->expiresAt($time + static::JSON_WEB_TOKEN_EXPIRY_TIME_IN_SECONDS)
+            ->issuedAt($now)
+            ->expiresAt($now->modify('+' . static::JSON_WEB_TOKEN_EXPIRY_TIME_IN_SECONDS . ' seconds'))
             ->withHeader('alg', $this->algorithm)
             ->withHeader('kid', $this->deviceName)
-            ->getToken($signer, $privateKey);
+            ->getToken($config->signer(), $config->signingKey());
 
-        return (string)$token;
+        return $token->toString();
     }
 
     protected function handleAccessTokenResponse(HttpResponse $response)

@@ -17,8 +17,8 @@ class DeviceTest extends BaseTest
         $this->app->config->set('proda.organisation_id', '1234567');
         $this->app->config->set('proda.client_id', 'abcdefg1234567');
 
-        $device1 = factory(Device::class)->create(['organisation_id' => null, 'client_id' => null]);
-        $device2 = factory(Device::class)->create(['organisation_id' => 'testorg', 'client_id' => 'testclient']);
+        $device1 = Device::factory()->create(['organisation_id' => null, 'client_id' => null]);
+        $device2 = Device::factory()->create(['organisation_id' => 'testorg', 'client_id' => 'testclient']);
 
         $this->assertEquals('1234567', $device1->organisation_id);
         $this->assertEquals('abcdefg1234567', $device1->client_id);
@@ -32,9 +32,9 @@ class DeviceTest extends BaseTest
     /** @test */
     public function it_only_retrieves_devices_with_expiring_keys()
     {
-        factory(Device::class)->create(['key_expiry' => (string)Carbon::now()->addDays(8), 'key_status' => Device::PRODA_DEVICE_ACTIVE]);
-        factory(Device::class)->create(['key_expiry' => (string)Carbon::now(), 'key_status' => Device::PRODA_DEVICE_INACTIVE]);
-        factory(Device::class)->create(['key_expiry' => (string)Carbon::now(), 'key_status' => Device::PRODA_DEVICE_ACTIVE]);
+        Device::factory()->create(['key_expiry' => (string)Carbon::now()->addDays(8), 'key_status' => Device::PRODA_DEVICE_ACTIVE]);
+        Device::factory()->create(['key_expiry' => (string)Carbon::now(), 'key_status' => Device::PRODA_DEVICE_INACTIVE]);
+        Device::factory()->create(['key_expiry' => (string)Carbon::now(), 'key_status' => Device::PRODA_DEVICE_ACTIVE]);
 
         $this->assertCount(1, Device::withExpiringKeys()->get());
     }
@@ -42,8 +42,8 @@ class DeviceTest extends BaseTest
     /** @test */
     public function it_retrieves_devices_that_are_expiring()
     {
-        factory(Device::class)->create(['device_expiry' => Carbon::now()->addDays(50)]);
-        factory(Device::class)->create(['device_expiry' => Carbon::now()->addDays(5)]);
+        Device::factory()->create(['device_expiry' => Carbon::now()->addDays(50)]);
+        Device::factory()->create(['device_expiry' => Carbon::now()->addDays(5)]);
 
         $this->assertCount(1, Device::expiring()->get());
     }

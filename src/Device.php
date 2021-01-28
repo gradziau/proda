@@ -3,9 +3,8 @@
 namespace GradziAu\Proda;
 
 use Carbon\Carbon;
-use GradziAu\Proda\Exceptions\ProdaAccessTokenException;
-use GradziAu\Proda\Exceptions\ProdaDeviceActivationException;
-use GradziAu\Proda\SslKey;
+use Database\Factories\DeviceFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,6 +13,7 @@ use Illuminate\Support\Facades\Cache;
  */
 class Device extends Model
 {
+    use HasFactory;
 
     const PRODA_DEVICE_ACTIVE = '[ACTIVE]';
     const PRODA_DEVICE_INACTIVE = '[INACTIVE]';
@@ -39,6 +39,11 @@ class Device extends Model
         static::creating(function (Device $device) {
             $device->setAdditionalDefaultValues();
         });
+    }
+
+    protected static function newFactory()
+    {
+        return DeviceFactory::new();
     }
 
     public function scopeWithExpiringKeys($query)
@@ -174,5 +179,4 @@ class Device extends Model
     {
         return ($this->status == static::PRODA_DEVICE_ACTIVE);
     }
-
 }

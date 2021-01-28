@@ -17,7 +17,7 @@ class ExpiringDevicesNotificationCommandTest extends BaseTestWithServer
     public function it_sends_a_notification_when_a_device_is_expiring()
     {
         $deviceName = Str::random();
-        factory(Device::class)->create(['name' => $deviceName, 'device_expiry' => (string)Carbon::now()->addDays(5)]);
+        Device::factory()->create(['name' => $deviceName, 'device_expiry' => (string)Carbon::now()->addDays(5)]);
         $testEmailAddress = 'proda@example.com';
         config()->set('proda.expiring_devices_notification_email', $testEmailAddress);
 
@@ -41,7 +41,7 @@ class ExpiringDevicesNotificationCommandTest extends BaseTestWithServer
     public function it_sends_no_notification_when_no_devices_are_expiring()
     {
         $deviceName = Str::random();
-        factory(Device::class)->create(['name' => $deviceName, 'device_expiry' => (string)Carbon::now()->addDays(60)]);
+        Device::factory()->create(['name' => $deviceName, 'device_expiry' => (string)Carbon::now()->addDays(60)]);
 
         Notification::fake();
 

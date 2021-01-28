@@ -14,6 +14,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Lcobucci\JWT\Configuration;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -43,8 +44,11 @@ class Device
 
     public static function getDeviceNameFromWebToken($token)
     {
-        $jsonWebToken = (new Lcobucci\JWT\Parser())->parse($token);
-        return $jsonWebToken->getClaim('sub');
+        return Configuration::forUnsecuredSigner()
+            ->parser()
+            ->parse($token)
+            ->claims()
+            ->get('sub');
     }
 
     public static function fromStore($deviceName)
@@ -55,7 +59,7 @@ class Device
 
     protected function updateAttributes($attributes)
     {
-        foreach ($attributes AS $key => $value) {
+        foreach ($attributes as $key => $value) {
             $this->{$key} = $value;
         }
         return $this;
@@ -87,7 +91,6 @@ class Device
         $this->active = true;
         $this->key = $publicKey;
     }
-
 }
 
 launchApp();
@@ -159,8 +162,9 @@ function getOneTimeActivationCode($deviceName)
 
 function retrieveDevice($deviceName)
 {
-    $device = Device::fromStore($deviceName);
-    return response()->json(['code' => $device]);
+    return response()->json([
+        'code' => Device::fromStore($deviceName)
+    ]);
 }
 
 function getExpiredOneTimeActivationCode($deviceName)
@@ -171,12 +175,11 @@ function getExpiredOneTimeActivationCode($deviceName)
 function getActivationCodeForDevice($deviceName, $active)
 {
     $activationCode = Str::random();
-    $device = new Device([
+    (new Device([
         'name' => $deviceName,
         'otac' => $activationCode,
         'otacActive' => $active,
-    ]);
-    $device->store();
+    ]))->store();
     return $activationCode;
 }
 

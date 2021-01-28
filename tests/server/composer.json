@@ -11,9 +11,9 @@
     ],
     "require": {},
     "require-dev": {
-        "laravel/lumen-framework": "^7.0",
-        "illuminate/session": "^7.0",
-        "codercat/jwk-to-pem": "^0.0.3",
-        "lcobucci/jwt": "^3.3"
+        "laravel/lumen-framework": "^8.0",
+        "illuminate/session": "^8.0",
+        "codercat/jwk-to-pem": "^1.0",
+        "lcobucci/jwt": "^4.0"
     }
 }

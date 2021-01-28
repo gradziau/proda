@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 
 class BaseTestWithServer extends BaseTest
 {
-
     public static $baseServerHost;
 
     public static function setUpBeforeClass(): void
@@ -20,7 +19,7 @@ class BaseTestWithServer extends BaseTest
     public function newActivatedDevice()
     {
         $name = Str::random();
-        $device = factory(Device::class)->create(['name' => $name, 'one_time_activation_code' => $this->getTestActivationCode($name)]);
+        $device = Device::factory()->create(['name' => $name, 'one_time_activation_code' => $this->getTestActivationCode($name)]);
         $device->activate();
         return $device;
     }
@@ -29,12 +28,10 @@ class BaseTestWithServer extends BaseTest
     {
         return Http::get(static::$baseServerHost . '/otac/' . $deviceName)->body();
     }
-
 }
 
 class ProdaServer
 {
-
     private static $isRunning = false;
 
     static function start($host)
@@ -66,5 +63,3 @@ class ProdaServer
         static::$isRunning = true;
     }
 }
-
-
