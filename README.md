@@ -1,4 +1,5 @@
 # PRODA Authorisation API Library
+![](https://laravel-og.beyondco.de/Proda.png?theme=light&packageManager=composer+require&packageName=gradziau%2Fproda&pattern=charlieBrown&style=style_2&description=PRODA+Authorisation+API+Library&md=1&showWatermark=1&fontSize=225px&images=folder-open&widths=450&heights=450)
 This library manages the activation of devices on PRODA, the Department of Human Services authorisation API.
 
 ## Installation
