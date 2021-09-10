@@ -30,7 +30,7 @@ class Client
 
     const API_VERSION = 'v1';
 
-    const JWK_GRANT_TYPE = 'urn:ietf:params:oauth:grant_type:jwt_bearer';
+    const JWK_GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:jwt_bearer';
 
     const JSON_WEB_TOKEN_EXPIRY_TIME_IN_SECONDS = 3600;
 
