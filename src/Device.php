@@ -116,7 +116,7 @@ class Device extends Model
 
     protected function getAccessTokenCacheKey()
     {
-        return sprintf('%s.%s.%s', $this->organistionId, $this->clientId, $this->name);
+        return sprintf('%s.%s.%s', $this->organisation_id, $this->client_id, $this->name);
     }
 
     protected function getAccessTokenExpiryInSeconds()
