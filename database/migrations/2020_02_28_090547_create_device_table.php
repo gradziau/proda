@@ -23,8 +23,8 @@ class CreateDeviceTable extends Migration
             $table->string('device_expiry')->nullable()->default(null);
             $table->string('key_status');
             $table->string('key_expiry')->nullable()->default(null);
-            $table->string('private_key');
-            $table->string('public_key_modulus');
+            $table->longtext('private_key');
+            $table->longtext('public_key_modulus');
             $table->json('json_web_key');
             $table->string('json_algorithm');
             $table->timestamps();
